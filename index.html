@@ -13,7 +13,6 @@
             --preto: #1d3557; 
             --branco: #f1faee; 
             --azul: #457b9d; 
-            --escuro: #333;
         }
         
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--branco); color: var(--preto); }
@@ -23,7 +22,6 @@
             border-bottom: 6px solid var(--amarelo); display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Avatar da Deputada */
         .avatar-container {
             width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--amarelo);
             background-color: #fff; margin-bottom: 12px; overflow: hidden;
@@ -35,7 +33,6 @@
         .hidden { display: none; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
         
-        /* Botões Estilizados */
         .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 12px; text-transform: uppercase; text-decoration: none; display: block; text-align: center; box-sizing: border-box; transition: 0.2s; }
         .btn:active { transform: scale(0.98); }
         
@@ -57,7 +54,7 @@
 
 <header>
     <div class="avatar-container">
-        <img src="edienemaria.png" alt="Ediane Maria">
+        <img src="edienemaria.png.jpg" alt="Ediane Maria">
     </div>
     <h3 style="margin:0; letter-spacing: 1px;">DIGNIDADE E DIREITO</h3>
     <small>Rede Solidária de Monitoramento</small>
@@ -67,7 +64,7 @@
 
     <div id="tela-cadastro" class="card">
         <h3 style="margin-top:0">Acesse a Rede</h3>
-        <p>Preencha seus dados para reportar ocorrências e receber apoio do gabinete.</p>
+        <p>Preencha seus dados para reportar ocorrências e receber apoio.</p>
         <input type="text" id="nome" placeholder="Seu Nome Completo">
         <input type="tel" id="whatsapp" placeholder="WhatsApp (DDD + Número)">
         <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Entrar no Monitoramento</button>
@@ -89,22 +86,18 @@
 
         <button class="btn btn-vermelho" onclick="proximaTela('tela-denuncia')">📢 Reportar Incidente Aqui</button>
         <a href="https://www.al.sp.gov.br/deputado/?matricula=300667" target="_blank" class="btn btn-azul">Trabalho da Deputada</a>
-        <button class="btn" style="background:#ddd; color: #555;" onclick="proximaTela('tela-cadastro')">Sair / Editar Perfil</button>
+        <button class="btn" style="background:#ddd; color: #555;" onclick="proximaTela('tela-cadastro')">← Sair</button>
     </div>
 
     <div id="tela-denuncia" class="hidden card">
         <h3>Reportar Agora</h3>
-        <p><small>Sua localização atual será marcada no mapa para alertar outros usuários da rede.</small></p>
-        
         <select id="tipo-incidente">
             <option value="Racismo">Racismo</option>
             <option value="LGBTfobia">LGBTfobia</option>
             <option value="Violência Doméstica">Violência Doméstica</option>
             <option value="Abuso de Autoridade">Abuso de Autoridade</option>
         </select>
-        
-        <textarea id="relato" rows="4" placeholder="Detalhes do ocorrido (Ex: Local exato, estabelecimento, etc.)"></textarea>
-        
+        <textarea id="relato" rows="4" placeholder="Detalhes do ocorrido..."></textarea>
         <button class="btn btn-vermelho" onclick="capturarEPin()">Publicar no Mapa</button>
         <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Voltar ao Mapa</button>
     </div>
@@ -113,21 +106,16 @@
 
 <script>
     let map;
-    // Exemplos de Pontos Oficiais de Acolhimento em SP
     const pontosAcolhimento = [
         { nome: "Centro de Cidadania LGBTI Luiz Carlos Ruas", lat: -23.5437, lng: -46.6432 },
         { nome: "Defensoria Pública - Unidade Central", lat: -23.5492, lng: -46.6331 },
-        { nome: "Casa da Mulher Brasileira", lat: -23.5552, lng: -46.6152 },
-        { nome: "Centro de Referência de Promoção da Igualdade Racial", lat: -23.5390, lng: -46.6340 }
+        { nome: "Casa da Mulher Brasileira", lat: -23.5552, lng: -46.6152 }
     ];
 
     function initMap() {
         map = L.map('map').setView([-23.5505, -46.6333], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // Renderiza pontos de acolhimento (Azuis)
         pontosAcolhimento.forEach(p => {
             L.circleMarker([p.lat, p.lng], {
                 color: '#457b9d', fillColor: '#a8dadc', fillOpacity: 0.9, radius: 10
@@ -138,27 +126,19 @@
     function proximaTela(id) {
         document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        if(id === 'tela-menu') {
-            setTimeout(() => { map.invalidateSize(); }, 400);
-        }
+        if(id === 'tela-menu') { setTimeout(() => { map.invalidateSize(); }, 400); }
     }
 
     function capturarEPin() {
         const tipo = document.getElementById('tipo-incidente').value;
-        const nome = document.getElementById('nome').value || "Usuário";
-
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 const { latitude, longitude } = pos.coords;
-                // Pin de Denúncia (Vermelho)
-                L.marker([latitude, longitude]).addTo(map)
-                    .bindPopup(`<b>ALERTA: ${tipo}</b><br>Reportado por um usuário agora.`)
-                    .openPopup();
-                
-                alert(`Obrigado, ${nome}. Seu relato foi adicionado ao mapa de monitoramento.`);
+                L.marker([latitude, longitude]).addTo(map).bindPopup(`<b>ALERTA: ${tipo}</b>`).openPopup();
+                alert(`Relato registrado com sucesso.`);
                 proximaTela('tela-menu');
                 map.setView([latitude, longitude], 15);
-            }, () => alert("Erro: GPS desligado. Não foi possível marcar o local exato."));
+            }, () => alert("Ative o GPS para marcar."));
         }
     }
 
