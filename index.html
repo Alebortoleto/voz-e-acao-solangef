@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voz e Ação - Gestão</title>
+    <title>Voz e Ação - Solange Freitas</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -14,67 +14,71 @@
         .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .hidden { display: none; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; text-decoration: none; display: block; text-align: center; box-sizing: border-box; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; display: block; text-align: center; box-sizing: border-box; text-decoration: none; }
         .btn-azul { background: var(--azul); color: white; }
         .btn-amarelo { background: var(--amarelo); color: var(--azul); }
         .btn-vermelho { background: var(--urgente); color: white; }
         .btn-verde { background: var(--verde); color: white; }
         #map { height: 350px; width: 100%; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--azul); }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        .denuncia-item { border-left: 5px solid var(--amarelo); padding: 10px; background: #f9f9f9; margin-bottom: 10px; border-radius: 4px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .denuncia-item { border-left: 6px solid var(--amarelo); padding: 15px; background: #fff; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .status-gps { font-size: 12px; color: var(--verde); font-weight: bold; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="avatar-container"><img src="solangefreitas.png" alt="Solange"></div>
-    <h3 style="margin:0">VOZ E AÇÃO</h3>
-    <small>Sistema de Fiscalização e Apoio</small>
+    <h3 style="margin:0; letter-spacing: 1px;">VOZ E AÇÃO</h3>
+    <small>Rede de Apoio e Fiscalização</small>
 </header>
 
 <div class="container">
 
     <div id="tela-cadastro" class="card">
-        <h3>Identificação</h3>
+        <h3 style="margin-top:0">Identificação</h3>
         <input type="text" id="nome" placeholder="Nome Completo">
-        <input type="tel" id="whatsapp" placeholder="WhatsApp">
+        <input type="tel" id="whatsapp" placeholder="WhatsApp (DDD + Número)">
         <button class="btn btn-azul" onclick="proximaTela('tela-menu')">Entrar no App</button>
-        <button class="btn" style="background:#444; color:white;" onclick="proximaTela('tela-login-gestor')">Área do Gestor</button>
-        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-amarelo">Conheça Solange Freitas</a>
+        <button class="btn" style="background:#444; color:white;" onclick="proximaTela('tela-login-gestor')">Acesso Gestor</button>
+        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-amarelo">Trabalho da Deputada</a>
     </div>
 
     <div id="tela-login-gestor" class="hidden card">
-        <h3>Acesso Restrito</h3>
-        <input type="password" id="senha-gestor" placeholder="Digite a Senha">
+        <h3>Login Administrativo</h3>
+        <input type="password" id="senha-gestor" placeholder="Senha do Gestor">
         <button class="btn btn-azul" onclick="verificarSenha()">Entrar no Painel</button>
         <button class="btn" onclick="proximaTela('tela-cadastro')">Voltar</button>
     </div>
 
     <div id="tela-menu" class="hidden">
         <div id="map"></div>
-        <button class="btn btn-vermelho" onclick="proximaTela('tela-denuncia')">📢 Reportar Incidente</button>
-        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-amarelo">Mandato Solange Freitas</a>
+        <button class="btn btn-vermelho" onclick="abrirTelaDenuncia()">📢 Reportar Agora (Usa GPS)</button>
+        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-amarelo">Conheça o Mandato</a>
         <button class="btn" style="background:#ddd" onclick="proximaTela('tela-cadastro')">Sair</button>
     </div>
 
     <div id="tela-denuncia" class="hidden card">
         <h3>Nova Ocorrência</h3>
+        <span id="status-gps" class="status-gps">🛰️ Localizando via GPS...</span>
+        
         <select id="tipo-incidente">
             <option value="Violência contra Mulher">⚠️ Violência contra Mulher</option>
             <option value="Saúde Pública">🏥 Saúde Pública</option>
             <option value="Causa Animal">🐾 Causa Animal</option>
-            <option value="Infraestrutura">🚧 Infraestrutura</option>
+            <option value="Infraestrutura">🚧 Infraestrutura / Vias</option>
         </select>
-        <textarea id="relato" rows="3" placeholder="Descreva o ocorrido..."></textarea>
-        <button class="btn btn-azul" onclick="registrarDenunciaParaApuracao()">Enviar para Análise</button>
-        <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Voltar</button>
+        
+        <textarea id="relato" rows="4" placeholder="Detalhes do ocorrido..."></textarea>
+        
+        <button class="btn btn-azul" id="btn-enviar" onclick="registrarDenuncia()" disabled style="opacity:0.5">Aguardando GPS...</button>
+        <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Cancelar</button>
     </div>
 
-    <div id="tela-gestor" class="hidden card">
-        <h3 style="color:var(--azul)">Apurar Ocorrências</h3>
-        <div id="lista-apuracao">
-            </div>
+    <div id="tela-gestor" class="hidden">
+        <h3 style="text-align:center; color:var(--azul)">Fila de Apuração</h3>
+        <div id="lista-apuracao"></div>
         <button class="btn" style="background:#ddd" onclick="proximaTela('tela-cadastro')">Sair do Painel</button>
     </div>
 
@@ -82,7 +86,8 @@
 
 <script>
     let map;
-    let bancoDadosDenuncias = []; // Simula o banco de dados temporário
+    let bancoDadosDenuncias = [];
+    let localizacaoAtual = null;
 
     function initMap() {
         map = L.map('map').setView([-23.95, -46.33], 12);
@@ -95,67 +100,81 @@
         if(id === 'tela-menu') setTimeout(() => map.invalidateSize(), 400);
     }
 
-    function verificarSenha() {
-        const senha = document.getElementById('senha-gestor').value;
-        if(senha === '123Pin567Pin') {
-            proximaTela('tela-gestor');
-            renderizarApuracao();
-        } else { alert('Senha Incorreta!'); }
-    }
-
-    function registrarDenunciaParaApuracao() {
-        const nome = document.getElementById('nome').value;
-        const whats = document.getElementById('whatsapp').value;
-        const tipo = document.getElementById('tipo-incidente').value;
-        const texto = document.getElementById('relato').value;
+    // AGILIDADE: Quando clica para denunciar, já puxa o GPS
+    function abrirTelaDenuncia() {
+        proximaTela('tela-denuncia');
+        localizacaoAtual = null;
+        document.getElementById('status-gps').innerText = "🛰️ Localizando sua posição na avenida...";
+        document.getElementById('btn-enviar').disabled = true;
+        document.getElementById('btn-enviar').innerText = "Aguardando GPS...";
+        document.getElementById('btn-enviar').style.opacity = "0.5";
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                const nova = {
-                    id: Date.now(),
-                    nome, whats, tipo, texto,
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                };
-                bancoDadosDenuncias.push(nova);
-                alert("Denúncia enviada! Nossa equipe vai apurar as informações antes de publicar no mapa.");
-                proximaTela('tela-menu');
-            });
+                localizacaoAtual = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                document.getElementById('status-gps').innerText = "✅ Localização capturada com sucesso!";
+                document.getElementById('btn-enviar').disabled = false;
+                document.getElementById('btn-enviar').innerText = "Publicar Denúncia";
+                document.getElementById('btn-enviar').style.opacity = "1";
+            }, () => {
+                document.getElementById('status-gps').innerText = "❌ Erro ao capturar GPS. Ative a localização.";
+                alert("Por favor, ative o GPS para que possamos marcar o local automaticamente.");
+            }, { enableHighAccuracy: true });
         }
     }
 
-    function renderizarApuracao() {
+    function registrarDenuncia() {
+        const d = {
+            id: Date.now(),
+            nome: document.getElementById('nome').value || "Anônimo",
+            whats: document.getElementById('whatsapp').value,
+            tipo: document.getElementById('tipo-incidente').value,
+            texto: document.getElementById('relato').value,
+            lat: localizacaoAtual.lat,
+            lng: localizacaoAtual.lng
+        };
+        bancoDadosDenuncias.push(d);
+        alert("Enviado! O local foi marcado pelo seu GPS. Agora nossa equipe fará a apuração.");
+        proximaTela('tela-menu');
+    }
+
+    function verificarSenha() {
+        if(document.getElementById('senha-gestor').value === '123Pin567Pin') {
+            proximaTela('tela-gestor');
+            renderizarPainel();
+        } else { alert('Senha incorreta!'); }
+    }
+
+    function renderizarPainel() {
         const lista = document.getElementById('lista-apuracao');
-        lista.innerHTML = bancoDadosDenuncias.length === 0 ? "<p>Nenhuma denúncia pendente.</p>" : "";
+        lista.innerHTML = bancoDadosDenuncias.length === 0 ? "<div class='card'>Nenhuma pendência.</div>" : "";
         
         bancoDadosDenuncias.forEach(d => {
             const item = document.createElement('div');
-            item.className = 'denuncia-item';
+            item.className = 'denuncia-item card';
             item.innerHTML = `
-                <b>${d.tipo}</b><br>
-                Denunciante: ${d.nome}<br>
-                Relato: ${d.texto}<br>
-                <a href="https://wa.me/55${d.whats.replace(/\D/g,'')}" target="_blank" style="color:green; font-weight:bold;">📞 Falar no WhatsApp</a>
-                <div style="display:flex; gap:5px; margin-top:10px;">
-                    <button class="btn btn-verde" onclick="validarDenuncia(${d.id}, true)" style="padding:8px; font-size:12px;">Procedente (Publicar)</button>
-                    <button class="btn btn-vermelho" onclick="validarDenuncia(${d.id}, false)" style="padding:8px; font-size:12px;">Improcedente (Remover)</button>
+                <strong style="color:var(--azul)">${d.tipo}</strong><br>
+                <b>Quem:</b> ${d.nome}<br>
+                <b>Relato:</b> ${d.texto}<br>
+                <a href="https://wa.me/55${d.whats.replace(/\D/g,'')}" target="_blank" style="color:var(--verde); font-weight:bold; display:block; margin: 10px 0;">💬 Chamar no WhatsApp</a>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-verde" onclick="validar(${d.id}, true)" style="padding:10px; font-size:12px;">Procedente</button>
+                    <button class="btn btn-vermelho" onclick="validar(${d.id}, false)" style="padding:10px; font-size:12px;">Improcedente</button>
                 </div>
             `;
             lista.appendChild(item);
         });
     }
 
-    function validarDenuncia(id, procedente) {
-        const index = bancoDadosDenuncias.findIndex(d => d.id === id);
-        if (index > -1) {
-            const d = bancoDadosDenuncias[index];
-            if (procedente) {
-                L.marker([d.lat, d.lng]).addTo(map).bindPopup(`<b>ALERTA VALIDADO: ${d.tipo}</b><br>${d.texto}`).openPopup();
-            }
-            bancoDadosDenuncias.splice(index, 1);
-            renderizarApuracao();
-            if(procedente) alert("Denúncia publicada no mapa!");
+    function validar(id, ok) {
+        const idx = bancoDadosDenuncias.findIndex(x => x.id === id);
+        const d = bancoDadosDenuncias[idx];
+        if(ok) {
+            L.marker([d.lat, d.lng]).addTo(map).bindPopup(`<b>VALIDADO: ${d.tipo}</b><br>${d.texto}`).openPopup();
+            alert("Aprovado! O PIN foi colocado no local exato da avenida onde o usuário estava.");
         }
+        bancoDadosDenuncias.splice(idx, 1);
+        renderizarPainel();
     }
 
     window.onload = initMap;
