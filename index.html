@@ -7,31 +7,33 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        :root { --azul: #004a99; --amarelo: #f9d21c; --branco: #ffffff; --fundo: #f0f2f5; --urgente: #d90429; --verde: #2a9d8f; }
+        :root { --azul: #004a99; --amarelo: #f9d21c; --branco: #ffffff; --fundo: #f0f2f5; --urgente: #d90429; --verde: #2a9d8f; --azul-claro: #457b9d; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--fundo); color: #333; }
         header { background: var(--azul); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--amarelo); display: flex; flex-direction: column; align-items: center; }
-        .avatar-container { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--amarelo); background: #fff; margin-bottom: 10px; overflow: hidden; }
+        .avatar-container { width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--amarelo); background: #fff; margin-bottom: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .hidden { display: none; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; display: block; text-align: center; box-sizing: border-box; text-decoration: none; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; display: block; text-align: center; box-sizing: border-box; text-decoration: none; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-azul { background: var(--azul); color: white; }
         .btn-amarelo { background: var(--amarelo); color: var(--azul); }
         .btn-vermelho { background: var(--urgente); color: white; }
         .btn-verde { background: var(--verde); color: white; }
+        .btn-institucional { background: var(--azul-claro); color: white; }
         .btn-gps { background: #666; color: white; padding: 10px; font-size: 14px; margin-top: 5px; }
         #map { height: 350px; width: 100%; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--azul); }
         input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .divisor { text-align: center; margin: 10px 0; font-weight: bold; color: #777; font-size: 11px; }
         .denuncia-item { border-left: 6px solid var(--amarelo); padding: 15px; background: #fff; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .divisor { text-align: center; margin: 10px 0; font-weight: bold; color: #777; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="avatar-container"><img src="solangefreitas.png" alt="Solange"></div>
-    <h3 style="margin:0">VOZ E AÇÃO</h3>
+    <div class="avatar-container"><img src="solangefreitas.png" alt="Solange Freitas"></div>
+    <h3 style="margin:0; letter-spacing: 1px;">VOZ E AÇÃO</h3>
     <small>Fiscalização e Apoio à Mulher</small>
 </header>
 
@@ -40,53 +42,54 @@
     <div id="tela-cadastro" class="card">
         <h3>Identificação</h3>
         <input type="text" id="nome" placeholder="Nome Completo">
-        <input type="tel" id="whatsapp" placeholder="WhatsApp">
-        <button class="btn btn-azul" onclick="proximaTela('tela-menu')">Entrar</button>
-        <button class="btn" style="background:#444; color:white;" onclick="proximaTela('tela-login-gestor')">Gestor</button>
+        <input type="tel" id="whatsapp" placeholder="WhatsApp (DDD + Número)">
+        <button class="btn btn-azul" onclick="proximaTela('tela-menu')">Entrar no App</button>
+        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-institucional">Conheça Solange Freitas</a>
+        <button class="btn" style="background:#444; color:white; font-size: 12px; padding: 10px;" onclick="proximaTela('tela-login-gestor')">Área Restrita (Gestor)</button>
     </div>
 
     <div id="tela-login-gestor" class="hidden card">
         <h3>Acesso Gestor</h3>
-        <input type="password" id="senha-gestor" placeholder="Senha">
-        <button class="btn btn-azul" onclick="verificarSenha()">Entrar</button>
+        <input type="password" id="senha-gestor" placeholder="Digite a Senha">
+        <button class="btn btn-azul" onclick="verificarSenha()">Entrar no Painel</button>
         <button class="btn" onclick="proximaTela('tela-cadastro')">Voltar</button>
     </div>
 
     <div id="tela-menu" class="hidden">
         <div id="map"></div>
         <button class="btn btn-vermelho" onclick="proximaTela('tela-denuncia')">📢 Reportar Ocorrência</button>
-        <button class="btn" style="background:#ddd" onclick="proximaTela('tela-cadastro')">Sair</button>
+        <a href="https://www.al.sp.gov.br/deputado/?matricula=300686" target="_blank" class="btn btn-amarelo">Trabalho da Deputada</a>
+        <button class="btn" style="background:#ddd; color: #333;" onclick="proximaTela('tela-cadastro')">← Sair</button>
     </div>
 
     <div id="tela-denuncia" class="hidden card">
         <h3>Onde aconteceu?</h3>
         
         <button class="btn btn-gps" id="btn-gps" onclick="capturarLocalizacao()">📍 Usar minha localização atual</button>
-        <div id="status-gps" style="font-size: 11px; text-align: center; color: var(--verde);"></div>
+        <div id="status-gps" style="font-size: 11px; text-align: center; color: var(--verde); margin-bottom: 5px;"></div>
 
         <div class="divisor">OU DIGITE O ENDEREÇO</div>
-
         <input type="text" id="endereco-manual" placeholder="Rua, Número, Bairro e Cidade">
 
-        <hr>
+        <hr style="opacity: 0.3;">
         
         <select id="tipo-incidente">
             <option value="Violência contra Mulher">⚠️ Violência contra Mulher</option>
             <option value="Saúde Pública">🏥 Saúde Pública</option>
             <option value="Causa Animal">🐾 Causa Animal</option>
-            <option value="Infraestrutura">🚧 Infraestrutura</option>
+            <option value="Infraestrutura">🚧 Infraestrutura / Vias</option>
         </select>
         
         <textarea id="relato" rows="4" placeholder="Descreva o ocorrido..."></textarea>
         
         <button class="btn btn-azul" onclick="registrarDenuncia()">Enviar para Apuração</button>
-        <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Voltar</button>
+        <button class="btn btn-amarelo" onclick="proximaTela('tela-menu')">Cancelar</button>
     </div>
 
     <div id="tela-gestor" class="hidden">
-        <h3 style="text-align:center;">Painel de Gestão</h3>
+        <h3 style="text-align:center; color: var(--azul);">Apurar Denúncias</h3>
         <div id="lista-apuracao"></div>
-        <button class="btn" style="background:#ddd" onclick="proximaTela('tela-cadastro')">Sair</button>
+        <button class="btn" style="background:#ddd" onclick="proximaTela('tela-cadastro')">Sair do Painel</button>
     </div>
 
 </div>
@@ -107,15 +110,14 @@
         if(id === 'tela-menu') setTimeout(() => map.invalidateSize(), 400);
     }
 
-    // Função para capturar GPS
     function capturarLocalizacao() {
         if (navigator.geolocation) {
-            document.getElementById('status-gps').innerText = "Buscando satélites...";
+            document.getElementById('status-gps').innerText = "🛰️ Buscando sinal de GPS...";
             navigator.geolocation.getCurrentPosition((pos) => {
                 localizacaoPendente = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                document.getElementById('status-gps').innerText = "✅ Localização capturada!";
-                document.getElementById('endereco-manual').value = ""; // Limpa manual se usou GPS
-            }, () => alert("Ative o GPS do celular."));
+                document.getElementById('status-gps').innerText = "✅ Localização capturada pelo GPS!";
+                document.getElementById('endereco-manual').value = ""; 
+            }, () => alert("Por favor, ative o GPS do celular."));
         }
     }
 
@@ -123,7 +125,6 @@
         let lat, lng;
         const endereco = document.getElementById('endereco-manual').value;
 
-        // Se tiver endereço manual e não usou GPS, tenta converter endereço em coordenadas (Geocoding)
         if (endereco && !localizacaoPendente) {
             try {
                 const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${endereco}`);
@@ -132,18 +133,15 @@
                     lat = parseFloat(data[0].lat);
                     lng = parseFloat(data[0].lon);
                 } else {
-                    alert("Endereço não encontrado. Tente ser mais específico (Ex: Rua X, 100, Santos).");
+                    alert("Endereço não encontrado. Digite rua, número e cidade.");
                     return;
                 }
-            } catch (e) {
-                alert("Erro ao buscar endereço.");
-                return;
-            }
+            } catch (e) { alert("Erro ao buscar endereço."); return; }
         } else if (localizacaoPendente) {
             lat = localizacaoPendente.lat;
             lng = localizacaoPendente.lng;
         } else {
-            alert("Por favor, use o GPS ou digite um endereço.");
+            alert("Use o botão de GPS ou digite o endereço.");
             return;
         }
 
@@ -153,12 +151,12 @@
             whats: document.getElementById('whatsapp').value,
             tipo: document.getElementById('tipo-incidente').value,
             texto: document.getElementById('relato').value,
-            local: endereco || "Localização via GPS",
+            local: endereco || "Capturado via GPS",
             lat, lng
         };
 
         bancoDadosDenuncias.push(d);
-        alert("Enviado para apuração! Obrigado por ajudar no mandato.");
+        alert("Sua denúncia foi enviada! A equipe de Solange Freitas irá apurar antes de publicar no mapa.");
         localizacaoPendente = null;
         proximaTela('tela-menu');
     }
@@ -172,17 +170,17 @@
 
     function renderizarPainel() {
         const lista = document.getElementById('lista-apuracao');
-        lista.innerHTML = bancoDadosDenuncias.length === 0 ? "<div class='card'>Sem pendências.</div>" : "";
+        lista.innerHTML = bancoDadosDenuncias.length === 0 ? "<div class='card'>Nenhuma denúncia aguardando.</div>" : "";
         
         bancoDadosDenuncias.forEach(d => {
             const item = document.createElement('div');
-            item.className = 'denuncia-item card';
+            item.className = 'denuncia-item';
             item.innerHTML = `
                 <strong style="color:var(--azul)">${d.tipo}</strong><br>
-                <b>Quem:</b> ${d.nome}<br>
+                <b>Denunciante:</b> ${d.nome}<br>
                 <b>Endereço:</b> ${d.local}<br>
                 <b>Relato:</b> ${d.texto}<br>
-                <a href="https://wa.me/55${d.whats.replace(/\D/g,'')}" target="_blank" style="color:var(--verde); font-weight:bold; display:block; margin: 10px 0;">💬 Contatar Denunciante</a>
+                <a href="https://wa.me/55${d.whats.replace(/\D/g,'')}" target="_blank" style="color:var(--verde); font-weight:bold; display:block; margin: 10px 0;">💬 Chamar no WhatsApp</a>
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-verde" onclick="validar(${d.id}, true)" style="padding:10px; font-size:12px;">Procedente</button>
                     <button class="btn btn-vermelho" onclick="validar(${d.id}, false)" style="padding:10px; font-size:12px;">Improcedente</button>
@@ -197,6 +195,7 @@
         const d = bancoDadosDenuncias[idx];
         if(ok) {
             L.marker([d.lat, d.lng]).addTo(map).bindPopup(`<b>VALIDADO: ${d.tipo}</b><br>${d.texto}`).openPopup();
+            alert("Publicado no mapa!");
         }
         bancoDadosDenuncias.splice(idx, 1);
         renderizarPainel();
